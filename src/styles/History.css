@@ -1,0 +1,21 @@
+.history {
+    flex-shrink: 0;
+    user-select: none;
+    top: 0px;
+    z-index: 4;
+    width: 100%;
+    padding: 12px 1rem 0.75rem;
+    display: flex;
+    box-sizing: border-box;
+    overflow: visible !important;
+    flex-direction: column;
+}
+
+.history h3 {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 1.8rem;
+    line-height: 4rem;
+    margin: 0px;
+    user-select: text;
+}

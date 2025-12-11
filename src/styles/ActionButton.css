@@ -1,0 +1,42 @@
+.action-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    width: 65px;
+    text-align: center;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: pointer;
+}
+
+.action-button span {
+    color: #aaaaaa;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 0.9rem;
+    line-height: 16px;
+}
+
+.action-button button {
+    cursor: pointer;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 100%;
+    color: #ebebeb;
+    background-color: #282828;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+.action-button button:hover {
+    background-color: #404040;
+}
+
+.action-button button svg {
+    width: 2rem;
+    height: 2rem;
+}
