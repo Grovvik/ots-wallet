@@ -25,7 +25,7 @@ This wallet is designed for simplicity, speed, and ease of integration with the 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/ots-wallet.git
+   git clone https://github.com/Grovvik/ots-wallet.git
    cd ots-wallet
    ```
 

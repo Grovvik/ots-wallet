@@ -1,4 +1,4 @@
-import "../styles/ActionButton.css";
+import "../../styles/Buttons/ButtonA.css";
 
 function ActionButton({ icon, label, onClick }) {
     return (

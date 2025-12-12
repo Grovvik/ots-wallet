@@ -19,8 +19,7 @@
     background: rgba(255, 80, 80, 0.08);
 }
 
-.input textarea,
-.input input {
+.input textarea, .input input {
     outline: none;
     border: none;
     background: transparent;

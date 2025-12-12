@@ -7,3 +7,21 @@
     cursor: pointer;
     color: rgb(64, 180, 240);
 }
+
+.send-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.send-note {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.send-note span {
+    color: #aaaaaa;
+    font-weight: 500;
+    font-size: 12px;
+}

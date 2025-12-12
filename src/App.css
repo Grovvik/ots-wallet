@@ -12,6 +12,10 @@ html, body {
     scrollbar-color: #555 #1a1a1a;
 }
 
+*::selection {
+    background: #0088cc33;
+}
+
 #root {
     display: flex;
     height: 100%;
