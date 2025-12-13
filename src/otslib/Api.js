@@ -8,6 +8,18 @@ async function get(url) {
     if (response.code == 200) return await response.json();
 }
 
+async function post(url, body) {
+    if (!url) return;
+    const response = await fetch(endpoint+url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body
+    });
+    if (response.code == 200) return await response.json();
+}
+
 async function getTransaction(address) {
     if (Address.fromAddress(address)) {
         const resp = await get('transactions/'+address);
@@ -29,4 +41,8 @@ async function getNonce(address) {
     }
 }
 
-export default { getTransaction, getBalance, getNonce }
+async function sendTransaction(transaction) {
+    const resp = await post('transaction', transaction.serialize());
+}
+
+export default { getTransaction, getBalance, getNonce, sendTransaction }
