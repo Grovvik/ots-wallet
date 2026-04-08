@@ -13,6 +13,7 @@ export const consts = {
     MAX_STRING_LENGTH: 1024 * 1024 * 64,
     MAX_DATA_LENGTH: 2 ** 18,
     OPCODE_PRICE: 100000n, // 0.0001 OTS
+    SLASH_AMOUNT: 10000000000n, // 10 OTS
     GENESIS_ADDRESSES: [
         '020850f6760b0a5280eac9bd2b9a7b425546a5d071c9cb5e41ba6227e13b36cf58',
         '021d1ec72e5a669ffa1b1ca6cbfb1f773f8a5aeed031c2ba707d2d9aa05bf3a3ca',
