@@ -253,7 +253,9 @@ export default function App() {
 
   const handleStake = async () => {
     if (!networkRef.current) return;
-    const tx = new Transaction({ type: 'stake', from: currentAddress, to: currentAddress, amount: BigInt(txForm.amount * 1e9), data: '', nonce: accountData.nonce });
+    const amountBI = BigInt(txForm.amount * 1e9);
+    if (amountBI > BigInt(accountData.balance) + costs.BASE_FEE) return showToast(t('noFunds', toOts(amountBI), toOts(BigInt(accountData.balance) + costs.BASE_FEE)), false);
+    const tx = new Transaction({ type: 'stake', from: currentAddress, to: currentAddress, amount: amountBI, data: '', nonce: accountData.nonce });
     try {
       tx.sign(activeWallet.priv);
       await networkRef.current.sendTransaction(tx);
@@ -270,6 +272,7 @@ export default function App() {
     );
   }
 
+  
   return (
     <div className="app">
       <div 
@@ -337,7 +340,7 @@ export default function App() {
 
       <BottomSheet isOpen={sheet === 'stake'} onClose={() => setSheet(null)} title={t('staking')}>
         <p className="subtitle">{t('stakeMinInfo', toOts(consts.MINIMAL_STAKE))}</p>
-        <input type="number" placeholder={t('stakeSum')} value={txForm.amount} onChange={e => setTxForm({...txForm, amount: BigInt(e.target.value)})} />
+        <input type="number" placeholder={t('stakeSum')} value={txForm.amount} onChange={e => setTxForm({...txForm, amount: e.target.value})} />
         <button className="btn-primary" style={{ background: 'var(--accentGreen)' }} onClick={handleStake}>{t('doStake')}</button>
       </BottomSheet>
 

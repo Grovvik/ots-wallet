@@ -1,4 +1,4 @@
-export const consts = {
+const consts = {
     MAX_SEEN_MESSAGES: 128,
     REQUEST_TIMEOUT: 5000, // User network request timed out
     MAX_RETRIES: 3, // Reconnect retries
@@ -14,6 +14,7 @@ export const consts = {
     MAX_DATA_LENGTH: 2 ** 18,
     OPCODE_PRICE: 100000n, // 0.0001 OTS
     SLASH_AMOUNT: 10000000000n, // 10 OTS
+    MAX_IDLE_SLOTS: 64,
     GENESIS_ADDRESSES: [
         '020850f6760b0a5280eac9bd2b9a7b425546a5d071c9cb5e41ba6227e13b36cf58',
         '021d1ec72e5a669ffa1b1ca6cbfb1f773f8a5aeed031c2ba707d2d9aa05bf3a3ca',
@@ -25,7 +26,7 @@ export const consts = {
     GENESIS_STAKE: 200000000000000n // 200_000 OTS
 };
 
-export const costs = {
+const costs = {
     BASE_FEE: 100000n, // 0.0001 OTS
     DEFAULT: 2000n, // 0.000002 OTS
     INSTRUCTION: 4000n, // 0.000004 OTS
@@ -35,3 +36,5 @@ export const costs = {
     CREATE_OBJECT: 10000n, // 0.00001 OTS
     MEMORY_BYTE: 2000n // 0.000002 OTS
 };
+
+module.exports = { consts, costs };
