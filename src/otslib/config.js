@@ -1,4 +1,4 @@
-const consts = {
+export const consts = {
     MAX_SEEN_MESSAGES: 128,
     REQUEST_TIMEOUT: 5000, // User network request timed out
     MAX_RETRIES: 3, // Reconnect retries
@@ -26,7 +26,7 @@ const consts = {
     GENESIS_STAKE: 200000000000000n // 200_000 OTS
 };
 
-const costs = {
+export const costs = {
     BASE_FEE: 100000n, // 0.0001 OTS
     DEFAULT: 2000n, // 0.000002 OTS
     INSTRUCTION: 4000n, // 0.000004 OTS
@@ -36,5 +36,3 @@ const costs = {
     CREATE_OBJECT: 10000n, // 0.00001 OTS
     MEMORY_BYTE: 2000n // 0.000002 OTS
 };
-
-module.exports = { consts, costs };
