@@ -1,58 +1,88 @@
 # OTS Wallet
 
-OTS Wallet is a lightweight web-based cryptocurrency wallet for **OTS**, built with **Vite** and **React**. It allows users to securely manage their OTS by sending, receiving, and exchanging them.
-
-This wallet is designed for simplicity, speed, and ease of integration with the OTS network.
-
-## Features
-
-- Generate and manage OTS wallet addresses
-- Send OTS tokens to any address
-- Receive OTS via shareable wallet address
-- Exchange OTS tokens (integrated swap functionality)
-- View transaction history and balance in real time
-- Secure private key handling (client-side only)
-
-## Technologies Used
-
-- **Vite** – Fast build tool and dev server
-- **React** – Frontend UI library
-- **Local storage** – Secure client-side key storage (optional: hardware wallet support planned)
+**OTS Wallet** is a lightweight, modern web-based cryptocurrency wallet for the **OTS Blockchain**, built with **Vite**, **React 19**, and **`ots-lib`**. It enables users to securely manage wallets, transfer OTS tokens, deploy and execute smart contracts, and stake tokens directly from their browser.
 
 ---
 
-## Installation
+## 🚀 Features
 
-1. Clone the repository:
+- 🔑 **Wallet Management**:
+  - Client-side key pair generation (secp256k1).
+  - Private key import and key renaming/deletion.
+  - Multi-wallet storage in local browser storage.
+  - Shareable address & QR code preview.
+
+- 💸 **Transactions & Real-Time P2P Network**:
+  - Send and receive OTS tokens with optional transaction comments.
+  - Direct WebSocket connection to OTS user P2P nodes (`P2PNetwork`).
+  - Real-time balance and transaction status notifications.
+
+- 📜 **Smart Contracts Engine**:
+  - Integrated smart contract compiler powered by `ots-lib`.
+  - Upfront execution cost calculation & opcode fee estimation.
+  - One-click contract deployment to the OTS Blockchain.
+  - Execute smart contract functions with dynamic JSON parameters and gas limit control.
+
+- 🥩 **Validator Staking**:
+  - Fast staking interface for participating in consensus validation.
+
+- 🌐 **UI & UX**:
+  - Fully responsive mobile & desktop design.
+  - Touch swipe gestures for tab navigation (`Home`, `Contracts`, `Settings`).
+  - Native-feeling Bottom Sheet dialogs.
+  - Multi-language support (**Russian** and **English**).
+
+---
+
+## 🛠 Tech Stack & Architecture
+
+- **UI Framework**: React 19 + Vite
+- **Icons**: Lucide React
+- **Blockchain Protocol & Crypto**: [`ots-lib`](https://www.npmjs.com/package/ots-lib) (Handles secp256k1 key generation, SHA-256 serialization, contract compilation, P2P WebSocket networking, and transaction signing)
+
+---
+
+## 📦 Installation & Setup
+
+### Prerequisites
+
+- **Node.js** (v18+ recommended)
+- **pnpm** (or `npm` / `yarn`)
+
+### Steps
+
+1. **Clone the repository**:
    ```bash
    git clone https://github.com/Grovvik/ots-wallet.git
    cd ots-wallet
    ```
 
-2. Install dependencies:
+2. **Install dependencies**:
    ```bash
-   npm i
+   pnpm install
    ```
+   > *Note: `ots-lib` will be installed automatically as a dependency.*
 
-3. Start the development server:
+3. **Start the local development server**:
    ```bash
-   npm run dev
+   pnpm dev
    ```
+   The application will run at [http://localhost:5173](http://localhost:5173).
 
-Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
+4. **Build for production**:
+   ```bash
+   pnpm build
+   ```
 
 ---
 
-## Security Notes
+## 🔒 Security Notes
 
-- Private keys are generated and stored **only on the client side**.
-- Never transmit private keys over the network.
-- Always back up your private key securely.
+- **Client-Side Security**: Private keys are generated and processed **strictly inside the client browser**. Private keys are never transmitted over the network or sent to remote servers.
+- **Data Protection**: Always back up your private keys in a secure location. Clearing browser data will erase non-backed-up wallets stored in `localStorage`.
 
-## Contributing
+---
 
-Contributions are welcome! Please read the contribution guidelines before submitting pull requests.
+## 📄 License
 
-## License
-
-This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
+This project is open-source and released under the [MIT License](LICENSE).

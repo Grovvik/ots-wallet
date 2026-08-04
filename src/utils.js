@@ -1,26 +1,8 @@
 export const EXPLORER = 'https://ots.su';
 export const WS_API = 'wss://api.ots.su'
 
-export function toOts(val) {
-    try {
-        const isNegative = val < 0n;
-        let s = (isNegative ? -val : val).toString();
-        
-        s = s.padStart(10, '0');
-        
-        const intPart = s.slice(0, -9);
-        let decPart = s.slice(-9).replace(/0+$/, '');
-        
-        const result = decPart ? `${intPart}.${decPart}` : intPart;
-        
-        const trimmedResult = result.replace(/^0+(?=\d)/, '');
-        
-        return isNegative ? `-${trimmedResult}` : trimmedResult;
-    } catch (e) {
-        console.error(e);
-        return '0';
-    }
-};
+import { toOts, toNanoOts } from 'ots-lib/format';
+export { toOts, toNanoOts };
 
 export function fetchApi(url, params) {
     return fetch('https://node.ots.su'+url, params);

@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Wallet, FileCode2, Settings, Check } from 'lucide-react';
-import CryptoUtils from './otslib/crypto';
-import P2PNetwork from './otslib/userNetwork';
+import WalletWrapper from 'ots-lib/wallet';
+import CryptoUtils from 'ots-lib/crypto';
+import P2PNetwork from 'ots-lib/userNetwork';
 import { Buffer } from 'buffer';
 window.Buffer = Buffer;
-import { toOts, saveWallets, loadWallets, fetchApi, sha256, countInstructions, WS_API } from './utils';
-import { compile } from './otslib/compiler';
-import { Transaction } from './otslib/models';
-import { consts, costs } from './otslib/config';
+import { toOts, toNanoOts, saveWallets, loadWallets, fetchApi, sha256, countInstructions, WS_API } from './utils';
+import { compile } from 'ots-lib/compiler';
+import { Transaction } from 'ots-lib/models';
+import { consts, costs } from 'ots-lib/config';
 import { translations } from './translate';
 import showToast from './components/Toast';
 import BottomSheet from './components/BottomSheet';
@@ -64,15 +65,16 @@ export default function App() {
     setTouchStart(null);
   };
 
-  const currentAddress = activeWallet ? CryptoUtils.getPublicKey(activeWallet.priv) : '';
-
+  const walletInstance = activeWallet ? WalletWrapper.fromData(activeWallet) : null;
+  const currentAddress = walletInstance ? walletInstance.address : '';
+  const currentPublicKey = walletInstance ? walletInstance.publicKey : '';
   useEffect(() => {
     if (activeWallet) {
       const handleIncomingTx = (data) => {
         if (!data || !data.tx) return;
         try {
           const tx = CryptoUtils.deserializeWithBigInt(data.tx);
-          if (tx.from === currentAddress || tx.to === currentAddress) {
+          if (tx.from === currentPublicKey || tx.to === currentPublicKey) {
             setAccountData(prev => {
               if (prev.history.some(h => h.hash === data.hash)) return prev;
               if (!data.success) {
@@ -81,8 +83,8 @@ export default function App() {
               let newBalance = prev.balance;
               const fee = data.fee ? BigInt(data.fee) : 0n;
               
-              if (tx.from === currentAddress) newBalance = prev.balance - (data.success ? tx.amount : 0n) - fee;
-              else if (tx.to === currentAddress) newBalance = prev.balance + (data.success ? tx.amount : 0n);
+              if (tx.from === currentPublicKey) newBalance = prev.balance - (data.success ? tx.amount : 0n) - fee;
+              else if (tx.to === currentPublicKey) newBalance = prev.balance + (data.success ? tx.amount : 0n);
 
               const newTx = {
                 hash: tx.hash || tx.signature || data.hash, type: tx.type, from: tx.from, to: tx.to,
@@ -92,7 +94,7 @@ export default function App() {
               return { 
                 ...prev, 
                 balance: newBalance,
-                nonce: tx.from === currentAddress ? prev.nonce + 1 : prev.nonce,
+                nonce: tx.from === currentPublicKey ? prev.nonce + 1 : prev.nonce,
                 history: [newTx, ...prev.history] 
               };
             });
@@ -115,7 +117,7 @@ export default function App() {
   const fetchAccountData = async () => {
     if (!currentAddress) return;
     try {
-      const res = await fetchApi(`/api/address/${currentAddress}`);
+      const res = await fetchApi(`/api/address/${currentPublicKey}`);
       if (res.ok) {
         const data = await res.json();
         setAccountData({
@@ -133,18 +135,29 @@ export default function App() {
   useEffect(() => { fetchAccountData(); }, [currentAddress]);
 
   const generateWallet = () => {
-    const keyPair = CryptoUtils.generateKeyPair(); 
-    const newWallet = { name: `Wallet ${wallets.length + 1}`, priv: keyPair.privateKey };
+    const newWalletWrap = WalletWrapper.generate(`Wallet ${wallets.length + 1}`);
+    const newWallet = newWalletWrap.toData();
     const updated = [...wallets, newWallet];
     setWallets(updated); saveWallets(updated); setActiveWallet(newWallet);
+    prompt(t('saveMnemonic') || 'Please save this mnemonic phrase in a secure location:', newWalletWrap.mnemonic);
   };
 
   const importWallet = () => {
-    const priv = prompt(t('enterPriv'));
-    if (priv) {
-      const newWallet = { name: `Wallet ${wallets.length + 1}`, priv: priv };
-      const updated = [...wallets, newWallet];
-      setWallets(updated); saveWallets(updated); setActiveWallet(newWallet);
+    const input = prompt(t('enterPriv') || 'Enter 12-word mnemonic phrase (or private key):');
+    if (input) {
+      try {
+        let newWalletWrap;
+        if (input.trim().includes(' ')) {
+            newWalletWrap = WalletWrapper.fromMnemonic(`Wallet ${wallets.length + 1}`, input.trim());
+        } else {
+            newWalletWrap = WalletWrapper.fromData({ name: `Wallet ${wallets.length + 1}`, priv: input.trim() });
+        }
+        const newWallet = newWalletWrap.toData();
+        const updated = [...wallets, newWallet];
+        setWallets(updated); saveWallets(updated); setActiveWallet(newWallet);
+      } catch (e) {
+        showToast('Invalid mnemonic or key', false);
+      }
     }
   };
 
@@ -170,16 +183,12 @@ export default function App() {
 
   const handleSend = async () => { 
     if (!networkRef.current) return showToast(t('netError'), false);
-    const amountBI = BigInt(txForm.amount * 1e9);
+    const amountBI = toNanoOts(txForm.amount);
     if (amountBI > BigInt(accountData.balance) + costs.BASE_FEE) return showToast(t('noFunds', toOts(amountBI), toOts(BigInt(accountData.balance) + costs.BASE_FEE)), false);
     setSendState('sending');
-    const tx = new Transaction({
-      type: 'transfer', from: currentAddress, to: txForm.to.trim(),
-      amount: amountBI, data: txForm.comment, nonce: accountData.nonce,
-    });
 
     try {
-      tx.sign(activeWallet.priv);
+      const tx = walletInstance.createTransfer(txForm.to.trim(), txForm.amount, txForm.comment, accountData.nonce);
       await networkRef.current.sendTransaction(tx);
       setSendState('success');
       setTxForm({ to: '', amount: '', comment: '' });
@@ -212,20 +221,11 @@ export default function App() {
     if (!networkRef.current) return;
     setDeployState('sending');
 
-    const futureAddress = await sha256(currentAddress + accountData.nonce);
+    const futureAddress = await sha256(currentPublicKey + accountData.nonce);
     try {
       const code = compile(contractForm.code);
-      const amountBI = BigInt(deployCost);
-
-      const tx = new Transaction({ 
-        type: 'deploy', 
-        from: currentAddress, 
-        amount: amountBI,
-        data: CryptoUtils.serializeWithBigInt(code), 
-        nonce: accountData.nonce, 
-      });
+      const tx = walletInstance.createDeploy(code, deployCost, accountData.nonce);
       
-      tx.sign(activeWallet.priv);
       await networkRef.current.sendTransaction(tx);
       
       setDeployedAddress(futureAddress);
@@ -238,13 +238,12 @@ export default function App() {
 
   const handleCall = async () => { 
     if (!networkRef.current) return;
-    const amountBI = BigInt((contractForm.amount || 0) * 1e9);
-    const gamLimitBI = BigInt(contractForm.gasLimit * 1e9)
+    const amountBI = toNanoOts(contractForm.amount || '0');
+    const gamLimitBI = toNanoOts(contractForm.gasLimit || '0');
     if (amountBI > BigInt(accountData.balance)) return showToast(t('noFunds', toOts(amountBI), toOts(accountData.balance)), false);
     if (gamLimitBI > BigInt(accountData.balance)) return showToast(t('noFunds', toOts(gamLimitBI), toOts(accountData.balance)), false);
-    const tx = new Transaction({ type: 'call', from: currentAddress, to: contractForm.address, amount: amountBI, data: contractForm.args, nonce: accountData.nonce });
     try {
-      tx.sign(activeWallet.priv);
+      const tx = walletInstance.createCall(contractForm.address.trim(), contractForm.amount || '0', contractForm.args, accountData.nonce);
       await networkRef.current.sendTransaction(tx);
       showToast(t('callSuccess'));
       setSheet(null);
@@ -253,11 +252,10 @@ export default function App() {
 
   const handleStake = async () => {
     if (!networkRef.current) return;
-    const amountBI = BigInt(txForm.amount * 1e9);
+    const amountBI = toNanoOts(txForm.amount);
     if (amountBI > BigInt(accountData.balance) + costs.BASE_FEE) return showToast(t('noFunds', toOts(amountBI), toOts(BigInt(accountData.balance) + costs.BASE_FEE)), false);
-    const tx = new Transaction({ type: 'stake', from: currentAddress, to: currentAddress, amount: amountBI, data: '', nonce: accountData.nonce });
     try {
-      tx.sign(activeWallet.priv);
+      const tx = walletInstance.createStake(txForm.amount, accountData.nonce);
       await networkRef.current.sendTransaction(tx);
       showToast(t('stakeSuccess'));
       setSheet(null);

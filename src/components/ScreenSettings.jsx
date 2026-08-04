@@ -1,6 +1,6 @@
 import { Plus, Globe } from 'lucide-react';
 import ContextMenu from './ContextMenu';
-import CryptoUtils from '../otslib/crypto';
+import CryptoUtils from 'ots-lib/crypto';
 
 export default function ScreenSettings({ wallets, activeWallet, setActiveWallet, onImport, onGenerate, onRename, onDelete, lang, setLang, t }) {
     return (
