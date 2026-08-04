@@ -18,7 +18,7 @@
   - Real-time balance and transaction status notifications.
 
 - **Smart Contracts Engine**:
-  - Integrated smart contract compiler powered by `@ots-blockchain/lib`.
+  - Integrated smart contract compiler powered by `@otsblockchain/lib`.
   - Upfront execution cost calculation & opcode fee estimation.
   - One-click contract deployment to the OTS Blockchain.
   - Execute smart contract functions with dynamic JSON parameters and gas limit control.
@@ -38,7 +38,7 @@
 
 - **UI Framework**: React 19 + Vite
 - **Icons**: Lucide React
-- **Blockchain Protocol & Crypto**: [`ots-lib`](https://www.npmjs.com/package/ots-lib) (Handles secp256k1 key generation, SHA-256 serialization, contract compilation, P2P WebSocket networking, and transaction signing)
+- **Blockchain Protocol & Crypto**: [`@otsblockchain/lib`](https://www.npmjs.com/package/@otsblockchain/lib) (Handles secp256k1 key generation, SHA-256 serialization, contract compilation, P2P WebSocket networking, and transaction signing)
 
 ---
 
@@ -53,25 +53,24 @@
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/Grovvik/ots-wallet.git
-   cd ots-wallet
+   git clone https://github.com/ots-blockchain/wallet.git
+   cd wallet
    ```
 
 2. **Install dependencies**:
    ```bash
-   pnpm install
+   npm install
    ```
-   > *Note: `ots-lib` will be installed automatically as a dependency.*
 
 3. **Start the local development server**:
    ```bash
-   pnpm dev
+   npm dev
    ```
    The application will run at [http://localhost:5173](http://localhost:5173).
 
 4. **Build for production**:
    ```bash
-   pnpm build
+   npm build
    ```
 
 ---
