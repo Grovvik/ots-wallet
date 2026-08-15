@@ -2,6 +2,9 @@
 
 **OTS Wallet** is a lightweight, modern web-based cryptocurrency wallet for the **OTS Blockchain**, built with **Vite**, **React 19**, and **`ots-lib`**. It enables users to securely manage wallets, transfer OTS tokens, deploy and execute smart contracts, and stake tokens directly from their browser.
 
+> [!WARNING]
+> This is the legacy version; it is no longer supported. Please use the modern version in the `main` branch.
+
 ---
 
 ## Features
